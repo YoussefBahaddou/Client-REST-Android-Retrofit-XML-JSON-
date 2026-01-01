@@ -1,4 +1,4 @@
-package ma.projet.restclient;
+package com.youssef.android.restclient;
 
 import android.content.DialogInterface;
 import android.os.Bundle;
@@ -14,9 +14,9 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import ma.projet.restclient.adapter.CompteAdapter;
-import ma.projet.restclient.entities.Compte;
-import ma.projet.restclient.repository.CompteRepository;
+import com.youssef.android.restclient.ui.adapter.AccountAdapter;
+import com.youssef.android.restclient.model.Account;
+import ma.projet.restclient.repository.AccountRepository;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import java.text.SimpleDateFormat;
@@ -27,9 +27,9 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-public class MainActivity extends AppCompatActivity implements CompteAdapter.OnDeleteClickListener, CompteAdapter.OnUpdateClickListener {
+public class BankDashboardActivity extends AppCompatActivity implements AccountAdapter.OnDeleteClickListener, AccountAdapter.OnUpdateClickListener {
     private RecyclerView recyclerView;
-    private CompteAdapter adapter;
+    private AccountAdapter adapter;
     private RadioGroup formatGroup;
     private FloatingActionButton addbtn;
 
@@ -54,7 +54,7 @@ public class MainActivity extends AppCompatActivity implements CompteAdapter.OnD
 
     private void setupRecyclerView() {
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
-        adapter = new CompteAdapter(this, this);
+        adapter = new AccountAdapter(this, this);
         recyclerView.setAdapter(adapter);
     }
 
@@ -66,26 +66,26 @@ public class MainActivity extends AppCompatActivity implements CompteAdapter.OnD
     }
 
     private void setupAddButton() {
-        addbtn.setOnClickListener(v -> showAddCompteDialog());
+        addbtn.setOnClickListener(v -> showAddAccountDialog());
     }
 
-    private void showAddCompteDialog() {
-        AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
-        View dialogView = getLayoutInflater().inflate(R.layout.dialog_add_compte, null);
+    private void showAddAccountDialog() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(BankDashboardActivity.this);
+        View dialogView = getLayoutInflater().inflate(R.layout.dialog_add_Account, null);
 
         EditText etSolde = dialogView.findViewById(R.id.etSolde);
         RadioGroup typeGroup = dialogView.findViewById(R.id.typeGroup);
 
         builder.setView(dialogView)
-                .setTitle("Ajouter un compte")
+                .setTitle("Ajouter un Account")
                 .setPositiveButton("Ajouter", (dialog, which) -> {
                     String solde = etSolde.getText().toString();
                     String type = typeGroup.getCheckedRadioButtonId() == R.id.radioCourant
                             ? "COURANT" : "EPARGNE";
 
                     String formattedDate = getCurrentDateFormatted();
-                    Compte compte = new Compte(null, Double.parseDouble(solde), type, formattedDate);
-                    addCompte(compte);
+                    Account Account = new Account(null, Double.parseDouble(solde), type, formattedDate);
+                    addAccount(Account);
                 })
                 .setNegativeButton("Annuler", null);
 
@@ -99,69 +99,69 @@ public class MainActivity extends AppCompatActivity implements CompteAdapter.OnD
         return formatter.format(calendar.getTime());
     }
 
-    private void addCompte(Compte compte) {
-        CompteRepository compteRepository = new CompteRepository("JSON");
-        compteRepository.addCompte(compte, new Callback<Compte>() {
+    private void addAccount(Account Account) {
+        AccountRepository AccountRepository = new AccountRepository("JSON");
+        AccountRepository.addAccount(Account, new Callback<Account>() {
             @Override
-            public void onResponse(Call<Compte> call, Response<Compte> response) {
+            public void onResponse(Call<Account> call, Response<Account> response) {
                 if (response.isSuccessful()) {
-                    showToast("Compte ajouté");
+                    showToast("Account ajouté");
                     loadData("JSON");
                 }
             }
 
             @Override
-            public void onFailure(Call<Compte> call, Throwable t) {
+            public void onFailure(Call<Account> call, Throwable t) {
                 showToast("Erreur lors de l'ajout");
             }
         });
     }
 
     private void loadData(String format) {
-        CompteRepository compteRepository = new CompteRepository(format);
-        compteRepository.getAllCompte(new Callback<List<Compte>>() {
+        AccountRepository AccountRepository = new AccountRepository(format);
+        AccountRepository.getAllAccount(new Callback<List<Account>>() {
             @Override
-            public void onResponse(Call<List<Compte>> call, Response<List<Compte>> response) {
+            public void onResponse(Call<List<Account>> call, Response<List<Account>> response) {
                 if (response.isSuccessful() && response.body() != null) {
-                    List<Compte> comptes = response.body();
-                    runOnUiThread(() -> adapter.updateData(comptes));
+                    List<Account> Accounts = response.body();
+                    runOnUiThread(() -> adapter.updateData(Accounts));
                 }
             }
 
             @Override
-            public void onFailure(Call<List<Compte>> call, Throwable t) {
+            public void onFailure(Call<List<Account>> call, Throwable t) {
                 showToast("Erreur: " + t.getMessage());
             }
         });
     }
 
     @Override
-    public void onUpdateClick(Compte compte) {
-        showUpdateCompteDialog(compte);
+    public void onUpdateClick(Account Account) {
+        showUpdateAccountDialog(Account);
     }
 
-    private void showUpdateCompteDialog(Compte compte) {
-        AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
-        View dialogView = getLayoutInflater().inflate(R.layout.dialog_add_compte, null);
+    private void showUpdateAccountDialog(Account Account) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(BankDashboardActivity.this);
+        View dialogView = getLayoutInflater().inflate(R.layout.dialog_add_Account, null);
 
         EditText etSolde = dialogView.findViewById(R.id.etSolde);
         RadioGroup typeGroup = dialogView.findViewById(R.id.typeGroup);
-        etSolde.setText(String.valueOf(compte.getSolde()));
-        if (compte.getType().equalsIgnoreCase("COURANT")) {
+        etSolde.setText(String.valueOf(Account.getSolde()));
+        if (Account.getType().equalsIgnoreCase("COURANT")) {
             typeGroup.check(R.id.radioCourant);
-        } else if (compte.getType().equalsIgnoreCase("EPARGNE")) {
+        } else if (Account.getType().equalsIgnoreCase("EPARGNE")) {
             typeGroup.check(R.id.radioEpargne);
         }
 
         builder.setView(dialogView)
-                .setTitle("Modifier un compte")
+                .setTitle("Modifier un Account")
                 .setPositiveButton("Modifier", (dialog, which) -> {
                     String solde = etSolde.getText().toString();
                     String type = typeGroup.getCheckedRadioButtonId() == R.id.radioCourant
                             ? "COURANT" : "EPARGNE";
-                    compte.setSolde(Double.parseDouble(solde));
-                    compte.setType(type);
-                    updateCompte(compte);
+                    Account.setSolde(Double.parseDouble(solde));
+                    Account.setType(type);
+                    updateAccount(Account);
                 })
                 .setNegativeButton("Annuler", null);
 
@@ -169,45 +169,45 @@ public class MainActivity extends AppCompatActivity implements CompteAdapter.OnD
         dialog.show();
     }
 
-    private void updateCompte(Compte compte) {
-        CompteRepository compteRepository = new CompteRepository("JSON");
-        compteRepository.updateCompte(compte.getId(), compte, new Callback<Compte>() {
+    private void updateAccount(Account Account) {
+        AccountRepository AccountRepository = new AccountRepository("JSON");
+        AccountRepository.updateAccount(Account.getId(), Account, new Callback<Account>() {
             @Override
-            public void onResponse(Call<Compte> call, Response<Compte> response) {
+            public void onResponse(Call<Account> call, Response<Account> response) {
                 if (response.isSuccessful()) {
-                    showToast("Compte modifié");
+                    showToast("Account modifié");
                     loadData("JSON");
                 }
             }
 
             @Override
-            public void onFailure(Call<Compte> call, Throwable t) {
+            public void onFailure(Call<Account> call, Throwable t) {
                 showToast("Erreur lors de la modification");
             }
         });
     }
 
     @Override
-    public void onDeleteClick(Compte compte) {
-        showDeleteConfirmationDialog(compte);
+    public void onDeleteClick(Account Account) {
+        showDeleteConfirmationDialog(Account);
     }
 
-    private void showDeleteConfirmationDialog(Compte compte) {
+    private void showDeleteConfirmationDialog(Account Account) {
         new AlertDialog.Builder(this)
                 .setTitle("Confirmation")
-                .setMessage("Voulez-vous vraiment supprimer ce compte ?")
-                .setPositiveButton("Oui", (dialog, which) -> deleteCompte(compte))
+                .setMessage("Voulez-vous vraiment supprimer ce Account ?")
+                .setPositiveButton("Oui", (dialog, which) -> deleteAccount(Account))
                 .setNegativeButton("Non", null)
                 .show();
     }
 
-    private void deleteCompte(Compte compte) {
-        CompteRepository compteRepository = new CompteRepository("JSON");
-        compteRepository.deleteCompte(compte.getId(), new Callback<Void>() {
+    private void deleteAccount(Account Account) {
+        AccountRepository AccountRepository = new AccountRepository("JSON");
+        AccountRepository.deleteAccount(Account.getId(), new Callback<Void>() {
             @Override
             public void onResponse(Call<Void> call, Response<Void> response) {
                 if (response.isSuccessful()) {
-                    showToast("Compte supprimé");
+                    showToast("Account supprimé");
                     loadData("JSON");
                 }
             }
@@ -220,6 +220,6 @@ public class MainActivity extends AppCompatActivity implements CompteAdapter.OnD
     }
 
     private void showToast(String message) {
-        runOnUiThread(() -> Toast.makeText(MainActivity.this, message, Toast.LENGTH_LONG).show());
+        runOnUiThread(() -> Toast.makeText(BankDashboardActivity.this, message, Toast.LENGTH_LONG).show());
     }
 }

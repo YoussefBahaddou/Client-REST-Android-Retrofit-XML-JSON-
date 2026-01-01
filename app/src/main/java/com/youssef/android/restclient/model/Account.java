@@ -1,11 +1,11 @@
-package ma.projet.restclient.entities;
+package com.youssef.android.restclient.model;
 
 import org.simpleframework.xml.Element;
 import org.simpleframework.xml.Root;
 import javax.xml.bind.annotation.XmlElement;
 
 @Root(name = "item", strict = false)
-public class Compte {
+public class Account {
     @Element(name = "id")
     private Long id;
 
@@ -18,9 +18,9 @@ public class Compte {
     @Element(name = "dateCreation")
     private String dateCreation;
 
-    public Compte() {}
+    public Account() {}
 
-    public Compte(Long id, double solde, String type, String dateCreation) {
+    public Account(Long id, double solde, String type, String dateCreation) {
         this.id = id;
         this.solde = solde;
         this.type = type;
@@ -58,7 +58,7 @@ public class Compte {
 
     @Override
     public String toString() {
-        return "Compte{" +
+        return "Account{" +
                 "id=" + id +
                 ", solde=" + solde +
                 ", type='" + type + '\'' +

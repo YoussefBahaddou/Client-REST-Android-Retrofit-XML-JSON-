@@ -3,11 +3,11 @@ plugins {
 }
 
 android {
-    namespace = "ma.projet.restclient"
+    namespace = "com.youssef.android.restclient"
     compileSdk = 35
 
     defaultConfig {
-        applicationId = "ma.projet.restclient"
+        applicationId = "com.youssef.android.restclient"
         minSdk = 24
         targetSdk = 35
         versionCode = 1
