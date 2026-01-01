@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="VcsDirectoryMappings">
+    <mapping directory="$PROJECT_DIR$/TP1" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/TP6_SpringBoot_Swagger" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/hibernate1" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/spring-hibernate-demo" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/tp2_Spring_IoC" vcs="Git" />
+  </component>
+</project>
